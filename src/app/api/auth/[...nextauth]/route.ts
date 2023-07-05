@@ -1,5 +1,4 @@
 import NextAuth, { Session, NextAuthOptions } from 'next-auth'
-import { IProfile } from '@/interfaces/profile.interface'
 import { User } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -11,7 +10,7 @@ declare module 'next-auth' {
   }
 
   interface User {
-    profile: IProfile
+    moodle_user: any
     access_token: string
   }
 }
