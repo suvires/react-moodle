@@ -1,4 +1,9 @@
-export default function Profile(session) {
-  console.log(session)
-  return <>{session.session.moodle_user.fullname}</>
+import { IProfile } from '@/interfaces/profile.interface'
+
+interface ProfileProps {
+  profile: IProfile
+}
+
+export default function Profile({ profile }: ProfileProps) {
+  return <>{profile.fullname}</>
 }

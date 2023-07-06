@@ -22,7 +22,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components": ["./src/components/*"],
-      "@/interfaces": ["./src/interfaces/*"]
+      "@/interfaces": ["./src/interfaces/*"],
+      "@/api": ["./src/app/api/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -36,7 +36,6 @@ export default function SignInPage() {
     handleSubmit,
     formState: { errors },
     formState: { touchedFields },
-    formState: { dirtyFields },
     formState: { isSubmitting },
     formState: { isValid },
   } = useForm({

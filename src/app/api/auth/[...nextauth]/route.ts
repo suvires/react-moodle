@@ -54,7 +54,6 @@ export const authOptions: NextAuthOptions = {
 
           if (res.ok) {
             const data = await res.json()
-            console.log(data)
             if (data.token) {
               const user: User = {
                 email: email,
@@ -88,7 +87,6 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
-        console.log(token)
         const params = new URLSearchParams({
           wstoken: '8b4e9bb3c1a2e37378fe92e892a1695e',
           wsfunction: 'core_user_get_users_by_field',
@@ -106,7 +104,6 @@ export const authOptions: NextAuthOptions = {
           }
         )
         const data = await res.json()
-        console.log(data)
         if (!res.ok) {
           throw new Error('Failed to fetch data')
         }
