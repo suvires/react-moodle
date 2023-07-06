@@ -72,10 +72,6 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  pages: {
-    signIn: '/auth',
-    error: '/not-found',
-  },
   callbacks: {
     async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
@@ -111,22 +107,6 @@ export const authOptions: NextAuthOptions = {
         session.user.profile = data[0]
       }
       return session
-    },
-  },
-  events: {
-    async signOut(message) {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/signOut`,
-        {
-          method: 'GET',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + message.token.access_token,
-          },
-        }
-      )
-      await res.json()
     },
   },
 }
