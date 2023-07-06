@@ -2,6 +2,7 @@ import NextAuth, { Session, NextAuthOptions } from 'next-auth'
 import { User } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import { IProfile } from '@/interfaces/profile.interface'
 
 declare module 'next-auth' {
   interface Session {
@@ -10,7 +11,9 @@ declare module 'next-auth' {
   }
 
   interface User {
-    moodle_user: any
+    id?: string
+    email: string
+    profile?: IProfile
     access_token: string
   }
 }
@@ -53,17 +56,19 @@ export const authOptions: NextAuthOptions = {
             const data = await res.json()
             console.log(data)
             if (data.token) {
-              return { email: email, access_token: data.token }
+              const user: User = {
+                email: email,
+                access_token: data.token,
+              }
+              return user
             } else {
               return null
             }
           } else {
-            return null
+            throw new Error(res.statusText)
           }
-        } catch (error) {
-          console.log(error)
-          return null
-          //throw new Error('An error occurred')
+        } catch (error: any) {
+          throw new Error(error)
         }
       },
     }),
@@ -83,6 +88,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
+        console.log(token)
         const params = new URLSearchParams({
           wstoken: '8b4e9bb3c1a2e37378fe92e892a1695e',
           wsfunction: 'core_user_get_users_by_field',
@@ -105,7 +111,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Failed to fetch data')
         }
         session.access_token = token.access_token
-        session.moodle_user = data[0]
+        session.user.profile = data[0]
       }
       return session
     },
