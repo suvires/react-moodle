@@ -32,23 +32,24 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        console.log(credentials)
         if (!credentials) {
           throw new Error('Credentials not provided')
         }
         const { email, password } = credentials
         try {
+          const params = new URLSearchParams({
+            username: email,
+            password: password,
+            service: 'react-moodle',
+          })
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_MOODLE_LOGIN_TOKEN_URL}`,
+            `${process.env.NEXT_PUBLIC_MOODLE_LOGIN_TOKEN_URL}?${params}`,
             {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: new URLSearchParams({
-                username: email,
-                password: password,
-                service: 'react-moodle',
-              }),
             }
           )
 
