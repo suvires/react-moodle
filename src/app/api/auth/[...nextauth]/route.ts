@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
             {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
               },
               body: new URLSearchParams({
                 username: email,
@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
         const params = new URLSearchParams({
-          wstoken: '8b4e9bb3c1a2e37378fe92e892a1695e',
+          wstoken: `${process.env.NEXT_PUBLIC_MOODLE_TOKEN}`,
           wsfunction: 'core_user_get_users_by_field',
           moodlewsrestformat: 'json',
           field: 'email',

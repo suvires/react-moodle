@@ -29,7 +29,8 @@ const SignInFormSchema = zod
 export default function SignInPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [signInError, setSignInError] = useState<string | undefined>('')
+  const [signInError, setSignInError] = useState<string>('')
+  const [isRedirecting, setSisRedirecting] = useState<boolean>(false)
 
   const {
     register,
@@ -37,7 +38,6 @@ export default function SignInPage() {
     formState: { errors },
     formState: { touchedFields },
     formState: { isSubmitting },
-    formState: { isValid },
   } = useForm({
     resolver: zodResolver(SignInFormSchema),
     mode: 'onChange',
@@ -61,6 +61,7 @@ export default function SignInPage() {
       if (response) {
         const { error } = response
         if (!error) {
+          setSisRedirecting(true)
           router.push('/')
         } else {
           setSignInError('Invalid email or password')
@@ -68,9 +69,9 @@ export default function SignInPage() {
       }
     })
   }
-
+  if (isRedirecting) return null
   return (
-    <form className="step-form" onSubmit={handleSubmit(onSubmit)}>
+    <form className="sign-in" onSubmit={handleSubmit(onSubmit)}>
       <label htmlFor="email">Your email</label>
       <input
         type="email"
@@ -98,16 +99,10 @@ export default function SignInPage() {
       {!!errors.password && touchedFields.password && (
         <p className="error">{errors.password.message}</p>
       )}
-      <div className="button">
-        {signInError && <p className="error">{signInError}</p>}
-        <button
-          type="submit"
-          className="btn btn--primary"
-          disabled={!isValid || isSubmitting}
-        >
-          Sign in
-        </button>
-      </div>
+      {signInError && <p className="error">{signInError}</p>}
+      <button className="btn btn--primary" disabled={isSubmitting}>
+        Sign in
+      </button>
     </form>
   )
 }
