@@ -32,7 +32,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        console.log(credentials)
         if (!credentials) {
           throw new Error('Credentials not provided')
         }
@@ -85,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && session.user) {
         const params = new URLSearchParams({
-          wstoken: `${process.env.NEXT_PUBLIC_MOODLE_TOKEN}`,
+          wstoken: token.access_token,
           wsfunction: 'core_user_get_users_by_field',
           moodlewsrestformat: 'json',
           field: 'email',

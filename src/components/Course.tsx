@@ -1,14 +1,21 @@
-import { getCourseById, getCourseContentById } from '@/services/core/course'
-import { redirect } from 'next/dist/server/api-utils'
+import {
+  getEnrolledCourseByUserIdAndCourseId,
+  getCourseContentById,
+} from '@/services/core/course'
+import { getUser } from '@/utils/auth'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default async function Course() {
-  const course = await getCourseById()
-  console.log(course)
-  const contents = await getCourseContentById()
-  console.log(contents)
-  if (!course) return <p>Curso no encontrado</p>
+interface CourseProps {
+  id: number
+}
+
+export default async function Course({ id }: CourseProps) {
+  const user = await getUser()
+  if (!user || user.id === undefined) throw new Error('User not found')
+  const course = await getEnrolledCourseByUserIdAndCourseId(user.id, id)
+  const contents = await getCourseContentById(id)
+  if (!course) throw new Error('Course not found')
   return (
     <div>
       <h1>{course.fullname}</h1>

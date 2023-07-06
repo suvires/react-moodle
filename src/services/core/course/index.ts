@@ -1,8 +1,12 @@
-export async function getEnrolledCoursesByUserId() {
+import { ICourse } from '@/interfaces/course.interface'
+import { getAccessToken } from '@/utils/auth'
+
+export async function getEnrolledCoursesByUserId(userId: number) {
   try {
+    const token = await getAccessToken()
     const params = new URLSearchParams({
-      userid: '44',
-      wstoken: `${process.env.NEXT_PUBLIC_MOODLE_TOKEN}`,
+      userid: `${userId}`,
+      wstoken: `${token}`,
       moodlewsrestformat: 'json',
       wsfunction: 'core_enrol_get_users_courses',
     })
@@ -19,7 +23,7 @@ export async function getEnrolledCoursesByUserId() {
     if (res.ok) {
       const data = await res.json()
       if (data.exception) {
-        return null
+        throw new Error(data.exception)
       } else {
         return data
       }
@@ -31,13 +35,17 @@ export async function getEnrolledCoursesByUserId() {
   }
 }
 
-export async function getCourseById() {
+export async function getEnrolledCourseByUserIdAndCourseId(
+  userId: number,
+  courseId: number
+) {
   try {
+    const token = await getAccessToken()
     const params = new URLSearchParams({
-      'options[ids][0]': '23',
-      wstoken: `${process.env.NEXT_PUBLIC_MOODLE_TOKEN}`,
+      userid: `${userId}`,
+      wstoken: `${token}`,
       moodlewsrestformat: 'json',
-      wsfunction: 'core_course_get_courses',
+      wsfunction: 'core_enrol_get_users_courses',
     })
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_MOODLE_WEBSERVICE_URL}?${params}`,
@@ -52,9 +60,15 @@ export async function getCourseById() {
     if (res.ok) {
       const data = await res.json()
       if (data.exception) {
-        return null
+        throw new Error(data.exception)
       } else {
-        return data[0]
+        console.log(data)
+        const course = data.find(
+          (course: ICourse) => course.id.toString() === courseId.toString()
+        )
+
+        console.log(course)
+        return course
       }
     } else {
       throw new Error(res.statusText)
@@ -64,11 +78,12 @@ export async function getCourseById() {
   }
 }
 
-export async function getCourseContentById() {
+export async function getCourseContentById(id: number) {
   try {
+    const token = await getAccessToken()
     const params = new URLSearchParams({
-      courseid: '23',
-      wstoken: `${process.env.NEXT_PUBLIC_MOODLE_TOKEN}`,
+      courseid: `${id}`,
+      wstoken: `${token}`,
       moodlewsrestformat: 'json',
       wsfunction: 'core_course_get_contents',
     })
@@ -86,7 +101,7 @@ export async function getCourseContentById() {
     if (res.ok) {
       const data = await res.json()
       if (data.exception) {
-        return null
+        throw new Error(data.exception)
       } else {
         return data
       }
